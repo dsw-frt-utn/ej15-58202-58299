@@ -74,4 +74,13 @@ public class DoctorsController : ControllerBase
 
         return NoContent();
     }
+    [HttpGet("test-specialities")]
+    public IActionResult TestSpecialities()
+    {
+        // Esto llamará al método de tu persistencia para ver qué cargó
+        var repo = HttpContext.RequestServices.GetService(typeof(Dsw2026Ej15.Data.IPersistence)) as Dsw2026Ej15.Data.PersistenceInMemory;
+
+        // Si usaste la interfaz estricta, mapeá una función que devuelva la lista o usá reflexión de prueba:
+        return Ok(repo);
+    }
 }
