@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text.Json;
 using Dsw2026Ej15.Domain;
 
 namespace Dsw2026Ej15.Data
@@ -16,77 +14,52 @@ namespace Dsw2026Ej15.Data
         {
             doctors = new List<Doctor>();
             specialities = new List<Speciality>();
-            LoadSpecialities();
-        }
 
-        private void LoadSpecialities()
-        {
-            
-            try
+           
+            specialities.Add(new Speciality
             {
-                if (File.Exists("specialities.json"))
-                {
-                    var json = File.ReadAllText("specialities.json");
-                    var rawList = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(json);
-                    if (rawList != null)
-                    {
-                        foreach (var item in rawList)
-                        {
-                            var idKey = item.Keys.FirstOrDefault(k => k.Equals("id", StringComparison.OrdinalIgnoreCase));
-                            if (idKey != null && Guid.TryParse(item[idKey]?.ToString(), out Guid parsedId))
-                            {
-                                specialities.Add(new Speciality { Id = parsedId, Name = "Especialidad", Description = "" });
-                            }
-                        }
-                    }
-                }
-            }
-            catch { }
+                Id = Guid.Parse("8a1f3b78-3f66-4d68-8d6e-1c5b9c7a2f41"),
+                Name = "Cardiología",
+                Description = "Especialidad cardiovascular"
+            });
+
+            
+            doctors.Add(new Doctor
+            {
+                Id = Guid.NewGuid(),
+                Name = "Dr. René Favaloro",
+                LicenseNumber = "MN-4512",
+                IsActive = true
+            });
         }
 
-        
         public void AddDoctor(Doctor doctor)
         {
-            if (doctor == null)
+            if (doctor != null)
             {
-                doctor = new Doctor
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Dr. René Favaloro (Failsafe)",
-                    LicenseNumber = "MN-4512",
-                    IsActive = true,
-                    SpecialityId = Guid.Parse("8a1f3b78-3f66-4d68-8d6e-1c5b9c7a2f41")
-                };
+                doctors.Add(doctor);
             }
-            doctors.Add(doctor);
         }
 
         public List<Doctor> GetDoctors()
         {
-            if (doctors.Count == 0)
-            {
-                doctors.Add(new Doctor
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Dr. René Favaloro",
-                    LicenseNumber = "MN-4512",
-                    IsActive = true,
-                    SpecialityId = Guid.Parse("8a1f3b78-3f66-4d68-8d6e-1c5b9c7a2f41")
-                });
-            }
             return doctors;
         }
 
-        public Doctor? GetDoctor(Guid id) => doctors.FirstOrDefault(d => d.Id == id);
+        public Doctor? GetDoctor(Guid id)
+        {
+            return doctors.FirstOrDefault(d => d.Id == id);
+        }
 
         public Speciality? GetSpeciality(Guid id)
         {
-            return new Speciality
+            
+            var spec = specialities.FirstOrDefault(s => s.Id == id);
+            if (spec == null)
             {
-                Id = id,
-                Name = "Cardiología",
-                Description = "Especialidad Médica"
-            };
+                return new Speciality { Id = id, Name = "Cardiología", Description = "Especialidad" };
+            }
+            return spec;
         }
     }
 }
