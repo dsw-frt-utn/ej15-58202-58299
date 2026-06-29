@@ -1,22 +1,25 @@
 using Dsw2026Ej15.Api.Middleware;
 using Dsw2026Ej15.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllers();
-builder.Services.AddSingleton<IPersistence, PersistenceInMemory>(); // [cite: 33]
 
+builder.Services.AddControllers();
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IPersistence, PersistenceEf>();
 
 builder.Services.AddHealthChecks();
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapibuilder
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-app.UseMiddleware<ExceptionMiddleware>(); // [cite: 98]
-
+app.UseMiddleware<ExceptionMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
@@ -24,10 +27,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseAuthorization();
 
-
-app.MapHealthChecks("/health-check"); // 
+app.MapHealthChecks("/health-check");
 
 app.MapControllers();
 
