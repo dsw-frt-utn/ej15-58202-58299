@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Dsw2026Ej15.Domain;
+﻿using Dsw2026Ej15.Domain;
 
 namespace Dsw2026Ej15.Data
 {
