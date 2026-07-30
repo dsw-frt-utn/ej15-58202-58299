@@ -1,5 +1,6 @@
 ﻿using Dsw2026Ej15.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http; 
 using Dsw2026Ej15.Api.Models;
 using Dsw2026Ej15.Api.Exceptions;
 using Dsw2026Ej15.Domain;
@@ -16,7 +17,9 @@ public class DoctorsController : ControllerBase
     {
         this.persistence = persistence;
     }
+
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult Get()
     {
         var doctors = persistence
@@ -25,7 +28,10 @@ public class DoctorsController : ControllerBase
 
         return Ok(doctors);
     }
+
     [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult Get(Guid id)
     {
         var doctor = persistence.GetDoctor(id);
@@ -37,7 +43,10 @@ public class DoctorsController : ControllerBase
 
         return Ok(doctor);
     }
+
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public IActionResult Post(DoctorRequest request)
     {
         var speciality = persistence.GetSpeciality(request.SpecialityId);
@@ -60,7 +69,10 @@ public class DoctorsController : ControllerBase
 
         return Created($"api/doctors/{doctor.Id}", doctor);
     }
+
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public IActionResult Delete(Guid id)
     {
         var doctor = persistence.GetDoctor(id);
@@ -74,13 +86,15 @@ public class DoctorsController : ControllerBase
 
         return NoContent();
     }
+
     [HttpGet("test-specialities")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public IActionResult TestSpecialities()
     {
-        // Esto llamará al método de tu persistencia para ver qué cargó
+        
         var repo = HttpContext.RequestServices.GetService(typeof(Dsw2026Ej15.Data.IPersistence)) as Dsw2026Ej15.Data.PersistenceInMemory;
 
-        // Si usaste la interfaz estricta, mapeá una función que devuelva la lista o usá reflexión de prueba:
+       
         return Ok(repo);
     }
 }
